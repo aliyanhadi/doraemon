@@ -100,10 +100,11 @@ calls/SMS, a dead lock screen or a broken Google account.
 ### Wireless ADB (Android 11+)
 1. Settings → About phone → tap **Build number** 7 times.
 2. Developer options → turn on **Wireless debugging** (join a Wi-Fi network first).
-3. Open Doraemon → **Pair &amp; Connect**.
-4. Back in Wireless debugging tap **Pair device with pairing code**. Keep that dialog visible (split-screen or pop-up).
-5. Enter the dialog's **port** and **code** in Doraemon → **Pair**.
-6. Tap **Connect** (leave port empty for auto-discovery), then **Start daemon**.
+3. Open Doraemon → **Pair &amp; Connect** → **Start notification pairing**.
+4. Go to Wireless debugging → **Pair device with pairing code**. A Doraemon notification appears with a code box
+   (like Shizuku). Type the 6-digit code **in the notification**, so the Settings dialog never closes.
+5. Doraemon pairs, connects and starts the daemon automatically.
+   *(Fallback: enter the dialog's port and code manually under "Manual pairing".)*
 
 ### USB ADB (Android 8–10)
 1. Enable **USB debugging** in Developer options and connect to a PC once.

@@ -6,7 +6,6 @@ plugins {
 android {
     namespace = "com.doraemon.adb"
     compileSdk = 34
-    base.archivesName.set("Doraemon")
 
     defaultConfig {
         applicationId = "com.doraemon.adb"

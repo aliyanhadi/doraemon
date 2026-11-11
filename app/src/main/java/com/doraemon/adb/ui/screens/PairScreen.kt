@@ -31,7 +31,12 @@ fun PairScreen(onBack: () -> Unit) {
     ScreenFrame("Pair & Connect", onBack) {
         Column(Modifier.verticalScroll(rememberScrollState())) {
             Panel {
-                Text("1 · Pair (Android 11+)", fontWeight = FontWeight.SemiBold)
+                Text("Easy pairing (recommended)", fontWeight = FontWeight.SemiBold)
+                Mono("1. Tap Start below.\n2. Open Settings → Developer options → Wireless debugging → Pair device with pairing code.\n3. A Doraemon notification appears with a code box. Type the 6-digit code there. The Settings dialog stays open; no port or IP typing needed.")
+                Btn("Start notification pairing") { PairingService.start(ctx); out = "Waiting for the pairing dialog…" }
+            }
+            Panel {
+                Text("Manual pairing (fallback)", fontWeight = FontWeight.SemiBold)
                 Mono("Developer options → Wireless debugging → ON → \"Pair device with pairing code\". Keep that dialog visible (split-screen or pop-up) and type its port + code here.")
                 OutlinedTextField(host, { host = it }, label = { Text("Host") }, singleLine = true, modifier = Modifier.fillMaxWidth())
                 OutlinedTextField(pairPort, { pairPort = it }, label = { Text("Pairing port") }, singleLine = true, keyboardOptions = num, modifier = Modifier.fillMaxWidth())
