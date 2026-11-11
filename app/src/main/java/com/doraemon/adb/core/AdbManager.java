@@ -19,22 +19,17 @@ import java.security.PublicKey;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
 import java.security.spec.PKCS8EncodedKeySpec;
+import java.math.BigInteger;
 import java.util.Date;
-import java.util.Random;
 
 import io.github.muntashirakon.adb.AbsAdbConnectionManager;
-import sun.security.x509.AlgorithmId;
-import sun.security.x509.CertificateAlgorithmId;
-import sun.security.x509.CertificateExtensions;
-import sun.security.x509.CertificateSerialNumber;
-import sun.security.x509.CertificateValidity;
-import sun.security.x509.CertificateVersion;
-import sun.security.x509.CertificateX509Key;
-import sun.security.x509.KeyIdentifier;
-import sun.security.x509.SubjectKeyIdentifierExtension;
-import sun.security.x509.X500Name;
-import sun.security.x509.X509CertImpl;
-import sun.security.x509.X509CertInfo;
+
+import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
+import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
+import org.bouncycastle.operator.ContentSigner;
+import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 
 /** Singleton ADB connection manager. Keys are generated once and persisted in app-private storage. */
 public final class AdbManager extends AbsAdbConnectionManager {
@@ -78,25 +73,14 @@ public final class AdbManager extends AbsAdbConnectionManager {
     }
 
     private static Certificate generateCert(PublicKey pub, PrivateKey priv) throws Exception {
-        String algo = "SHA512withRSA";
-        CertificateExtensions ext = new CertificateExtensions();
-        ext.set(SubjectKeyIdentifierExtension.NAME,
-                new SubjectKeyIdentifierExtension(new KeyIdentifier(pub).getIdentifier()));
         X500Name name = new X500Name("CN=Doraemon");
         Date from = new Date();
         Date to = new Date(from.getTime() + 10L * 365 * 24 * 3600 * 1000);
-        X509CertInfo info = new X509CertInfo();
-        info.set(X509CertInfo.VERSION, new CertificateVersion(CertificateVersion.V3));
-        info.set(X509CertInfo.SERIAL_NUMBER, new CertificateSerialNumber(new Random().nextInt() & Integer.MAX_VALUE));
-        info.set(X509CertInfo.ALGORITHM_ID, new CertificateAlgorithmId(AlgorithmId.get(algo)));
-        info.set(X509CertInfo.SUBJECT, name);
-        info.set(X509CertInfo.KEY, new CertificateX509Key(pub));
-        info.set(X509CertInfo.VALIDITY, new CertificateValidity(from, to));
-        info.set(X509CertInfo.ISSUER, name);
-        info.set(X509CertInfo.EXTENSIONS, ext);
-        X509CertImpl cert = new X509CertImpl(info);
-        cert.sign(priv, algo);
-        return cert;
+        BigInteger serial = BigInteger.valueOf(System.currentTimeMillis());
+        ContentSigner signer = new JcaContentSignerBuilder("SHA512withRSA").build(priv);
+        X509CertificateHolder holder =
+                new JcaX509v3CertificateBuilder(name, serial, from, to, name, pub).build(signer);
+        return new JcaX509CertificateConverter().getCertificate(holder);
     }
 
     private static byte[] readAll(File f) throws IOException {

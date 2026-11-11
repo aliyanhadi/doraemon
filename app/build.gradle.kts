@@ -23,7 +23,7 @@ android {
     buildFeatures { compose = true }
     composeOptions { kotlinCompilerExtensionVersion = "1.5.14" }
     packaging {
-        resources.excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        resources.excludes += listOf("/META-INF/{AL2.0,LGPL2.1}", "/META-INF/versions/**", "/META-INF/*.version")
         jniLibs.useLegacyPackaging = true
     }
     lint { abortOnError = false }
@@ -41,7 +41,8 @@ dependencies {
     // Wireless ADB (pairing + TLS connect) - runs fully on-device, no root
     implementation("com.github.MuntashirAkon:libadb-android:3.1.1")
     implementation("org.conscrypt:conscrypt-android:2.5.3")
-    implementation("com.github.MuntashirAkon:sun-security-android:1.1")
+    implementation("org.bouncycastle:bcprov-jdk15to18:1.78.1")
+    implementation("org.bouncycastle:bcpkix-jdk15to18:1.78.1")
     implementation("org.lsposed.hiddenapibypass:hiddenapibypass:4.3")
 
     // Dhizuku (Device Owner delegation)
